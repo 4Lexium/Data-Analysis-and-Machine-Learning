@@ -8,4 +8,4 @@ utilities.py contains all functions and classes as an alternative to the noteboo
 
 figure folder contains the all the saved plots.
 
-Project1.pdf describes the theory and methods used in this report, and offsers a discussion on the plots what they mean.
+Project1.pdf describes the theory and methods used in this report, it offsers a discussion on the plots and what they mean.
