@@ -1,0 +1,96 @@
+What is the main difference between ordinary least squares and Ridge regression?
+
+-> Added regularization, gives nice benefits: like paramter constraining, stabilizing the model outcome, and hence, defering the risk of overiffing to higher complexity
+
+Which kind of data set would you use logistic regression for?
+
+-> Logistic regression yeields bounded output, making it good for probability and probability vectors. 
+
+In linear regression you assume that your output is described by a continuous non-stochastic function. Which is the equivalent function in logistic regression?
+
+-> Sigmoid or Softmax, both bounded and non-linnear, where sofmax also fulfills the normalized acorss multiple classes
+
+Can you find an analytic solution to a logistic regression type of problem?
+
+-> Derivative if sigmoids feature sigmoids, so again non-linear in input, thus the general anwser is No. 
+
+What kind of cost function would you use in logistic regression?
+
+-> The cross entropy, it does the negative log (for minimization problem) and it works wonderfully with the softmax absorbing the complmentary turms into the normalziation of sofmax, hence it can be unifidely used for binary and multiclass.
+
+What is an activation function and discuss the use of an activation function? Explain three different types of activation functions?
+
+-> Activation function takes in the trigger parameters (weight and bias) and judges wether the recieving impulse vector from previous layer is worth transmitting onwards. In hidden layers simple transmissions like linear or more fancy ReLu are used. They dont do any contraction or dimenstional filtering. In later stages using Sigmoids or Softmax helps bringing down the dimenstionality as a natural vecridct/conclusion.
+
+Describe the architecture of a typical feed forward Neural Network (NN).
+
+-> Nodes in layers, recieve inpulse vectors from previous layers, and transmit a response to next layer.
+
+You are using a deep neural network for a prediction task. After training your model, you notice that it is strongly overfitting the training set and that the performance on the test isn’t good. What can you do to reduce overfitting?
+
+-> Adding regularization, reduce the debth of the network
+
+How would you know if your model is suffering from the problem of exploding gradients?
+
+-> Losses becomes reiculously large or small giving NaNs. The loss starts to fluctuate. 
+
+Can you name and explain a few hyperparameters used for training a neural network?
+
+-> Regularization lambda, Learning rate eta, betas and alphas for moments, gradient clipping tolerance
+
+Describe the architecture of a typical Convolutional Neural Network (CNN)
+
+-> Add a fliter (convoluter stage) it reduces the dimentinality by cropping the input features to only neccecary information.
+
+What is the vanishing gradient problem in Neural Networks and how to fix it?
+
+-> When the gradient of sigmoids becomes so slow we effectively stop the training. Solutions are like gradient clipping to add a lower cap, or normalize the input to these functions, aka stable softmaxes. Using more transmitting activation function with leaking 
+
+When it comes to training an artificial neural network, what could the reason be for why the cost/loss doesn’t decrease in a few epochs?
+
+-> inadequate learning rate or initial weights. Use the best optimization (adaptive, full batch), vanishing GD
+
+How does L1/L2 regularization affect a neural network?
+
+-> anwsered earlier
+
+What is(are) the advantage(s) of deep learning over traditional methods like linear regression or logistic regression?
+
+-> more effective for higher dimenstional data, better for patterns, no need to fix the model complexity
+
+
+Which is the basic mathematical root-finding method behind essentially all gradient descent approaches(stochastic and non-stochastic)?
+
+-> Netwton method, follow the negative gradient of the parameter space topology
+
+And why don’t we use it? Or stated differently, why do we introduce the learning rate as a parameter?
+
+-> We dont want to to compute the derivative explicitly, the hessian. 
+
+What might happen if you set the momentum hyperparameter too close to 1 (e.g., 0.9999) when using an optimizer for the learning rate?
+
+-> slow adaption
+
+Why should we use stochastic gradient descent instead of plain gradient descent?
+
+-> faster 
+
+Which parameters would you need to tune when use a stochastic gradient descent approach?
+
+-> learning rate smaller, number of epoch 
+
+How do you assess overfitting and underfitting?
+
+-> MSE train vs test (if its very different) Look at the shape, is the true function or does it get distracted by noise.
+
+Why do we divide the data in test and train and/or eventually validation sets?
+
+-> Scale it? Make optimiation independant of scale and offsets. In case of very large data, very small data (entries), or random data size all together
+
+Why would you use resampling methods in the data analysis? Mention some widely popular resampling methods.
+
+-> Usefull to reproduce more test data, (when limited samples). Good for evaluation (like accuracy using Kfold). In mini batching resample before selecting a batch (escape local minima)
+
+Why might a model that does not overfit the data (maybe because there is a lot of data) perform worse when we add regularization?
+
+-> The formulation is a bit ambiguous. Regularization does not enjoy strong noise (since regularization is constant and noise is stochastic). So in case of high noise pollution and large sample size, (OLS will surpass regularization) regularization is actually more disadavatageous. But the keypoint is combination of strong noise and large sample. 
