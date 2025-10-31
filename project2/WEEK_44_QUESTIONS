@@ -61,11 +61,11 @@ What is(are) the advantage(s) of deep learning over traditional methods like lin
 
 Which is the basic mathematical root-finding method behind essentially all gradient descent approaches(stochastic and non-stochastic)?
 
--> Netwton method, follow the negative gradient of the parameter space topology
+-> Netwton method, follow the negative gradient of the parameter space topology where update is f(x)/f'(x) where f(x) is the gradient and hence f'(x) is the hessian
 
 And why don’t we use it? Or stated differently, why do we introduce the learning rate as a parameter?
 
--> We dont want to to compute the derivative explicitly, the hessian. 
+-> The learning rate is a substitute for the hessian f'(x). So it would mean the second derivative of the cost function which we would like to not compute. Instead find only the gradient and then use it again in adaptive learning rate). 
 
 What might happen if you set the momentum hyperparameter too close to 1 (e.g., 0.9999) when using an optimizer for the learning rate?
 
