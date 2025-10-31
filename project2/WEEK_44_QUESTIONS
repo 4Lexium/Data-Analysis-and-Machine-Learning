@@ -1,6 +1,6 @@
 What is the main difference between ordinary least squares and Ridge regression?
 
--> Added regularization, gives nice benefits: like paramter constraining, stabilizing the model outcome, and hence, defering the risk of overiffing to higher complexity
+-> Added regularization, gives nice benefits: like paramter constraining, stabilizing the model outcome, and hence, defering the risk of overiffing to higher complexity (with an asterix: unless lamba value is inadequate for the noise level)
 
 Which kind of data set would you use logistic regression for?
 
@@ -8,7 +8,7 @@ Which kind of data set would you use logistic regression for?
 
 In linear regression you assume that your output is described by a continuous non-stochastic function. Which is the equivalent function in logistic regression?
 
--> Sigmoid or Softmax, both bounded and non-linnear, where sofmax also fulfills the normalized acorss multiple classes
+-> Sigmoid or Softmax, both bounded and non-linnear, where sofmax also fulfills the normalization acorss multiple classes
 
 Can you find an analytic solution to a logistic regression type of problem?
 
@@ -16,7 +16,7 @@ Can you find an analytic solution to a logistic regression type of problem?
 
 What kind of cost function would you use in logistic regression?
 
--> The cross entropy, it does the negative log (for minimization problem) and it works wonderfully with the softmax absorbing the complmentary turms into the normalziation of sofmax, hence it can be unifidely used for binary and multiclass.
+-> The cross entropy, it does the negative log (for minimization problem) and it works wonderfully with the softmax absorbing the complmentary terms into the normalziation of sofmax, hence it can be used for both binary and multiclass.
 
 What is an activation function and discuss the use of an activation function? Explain three different types of activation functions?
 
