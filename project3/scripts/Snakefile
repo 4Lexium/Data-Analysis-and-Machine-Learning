@@ -1,0 +1,252 @@
+configfile: "config.yaml"
+include: "PFNs.snake"
+
+years = ["2016","2017","2018"] 
+polarities = ["MU","MD"]
+channels = ["D2H", "D4H"]
+trees = ["data", "mc"]
+tracks = ["LL", "DD"] 
+
+# list of ROOT macros (without .C)
+scripts = [
+    # "Scripts/snaketest",
+    # Scripts/B_BDT...
+    "B_BDT/TMVAClassification_D2H_LL",
+    "B_BDT/TMVAClassification_D2H_DD",
+    "B_BDT/TMVAClassification_D4H_LL",
+    "B_BDT/TMVAClassification_D4H_DD",
+    "B_BDT/TMVAApplication_D2H_LL",
+    "B_BDT/TMVAApplication_D2H_DD",
+    "B_BDT/TMVAApplication_D4H_LL",
+    "B_BDT/TMVAApplication_D4H_DD",
+    # "B_DNN/TMVAClassification_D4H_LL",
+    # "B_DNN/TMVAClassification_D4H_DD",
+    # "B_DNN/TMVAApplication_D2H_LL",
+    # "B_DNN/TMVAApplication_D2H_DD",
+    # "B_DNN/TMVAApplication_D4H_LL",
+    # "B_DNN/TMVAApplication_D4H_DD",
+    # "B_BDT/FoMScan",
+    # "B_BDT/ApplyBDTCut",
+]
+
+def python_to_c_list(list):
+    list_size = len(list)
+    list_txt = "{"
+    for i in range(list_size):
+        list_txt+="\""
+        list_txt+=list[i]
+        list_txt+="\""
+        if i != list_size-1:
+            list_txt+=","	
+    list_txt+="}"
+    return list_txt
+
+rule all:
+    input:
+        # "Output/snaketest/final_output.txt",
+        # "Output/snaketest/normal_distribution.png",
+        # "Output/snaketest/python_analysis.png",
+        [f"Output/B_BDT/TMVAClassification/TMVA_{channel}_{track}.root" for channel in channels for track in tracks], 
+        [f"Output/B_BDT/TMVAApplication/{tree}_{year}_{channel}_{polarity}_{track}.root" for tree in trees for channel in channels for track in tracks for year in years for polarity in polarities],  
+        # [f"Output/B_DNN/TMVAClassification/TMVA_{channel}_{track}.root" for channel in channels for track in tracks], 
+        # [f"Output/B_DNN/TMVAApplication/{tree}_{year}_{channel}_{polarity}_{track}.root" for tree in trees for channel in channels for track in tracks for year in years for polarity in polarities],  
+        # [f"Output/B_BDT/FoMScan/{channel}_{track}.txt" for channel in channels for track in tracks],   
+        # [f"Output/B_BDT/ApplyBDTCut/{tree}_{channel}_{track}.root" for tree in trees for channel in channels for track in tracks],   
+
+# # Run snaketest.C to produce a ROOT file with normal distribution
+# rule run_snaketest_C:
+#     input:
+#         "Snake/Scripts/snaketest.C"
+#     output:
+#         "Output/snaketest/snaketest_output.root",
+#         "Output/snaketest/normal_distribution.png"
+#     log:
+#         "Log/snaketest_C.log"
+#     run:
+#         shell("mkdir -p Output/snaketest Log")
+#         shell("""
+#             root -b -l -q 'Snake/Scripts/snaketest.C("Output/snaketest/snaketest_output.root")' > {log} 2>&1
+#             # Move the generated plot to output directory
+#             if [ -f "normal_distribution.png" ]; then
+#                 mv normal_distribution.png Output/snaketest/
+#             fi
+#         """)
+
+# # Simple Python analysis that just generates plots
+# rule run_snaketest_py:
+#     input:
+#         "Output/snaketest/snaketest_output.root"
+#     output:
+#         "Output/snaketest/final_output.txt",
+#         "Output/snaketest/python_analysis.png"
+#     log:
+#         "Log/snaketest_py.log"
+#     run:
+#         shell("mkdir -p Output/snaketest Log")
+#         shell("""
+#             python Snake/Scripts/snaketest.py > {log} 2>&1
+#             # Move generated plot to output directory
+#             if [ -f "python_analysis.png" ]; then
+#                 mv python_analysis.png Output/snaketest/
+#             fi
+#             # Create simple final output
+#             echo "Analysis completed successfully" > {output}
+#             echo "Generated: $(date)" >> {output}
+#         """)
+
+rule CompileAll:
+    log: "Log/CompileAll/{script}.log"
+    input: "Snake/Scripts/{script}.C"
+    output: 
+        "Snake/lib/{script}_C.so",
+        "Snake/lib/{script}_C.d",
+        "Snake/lib/{script}_C_ACLiC_dict_rdict.pcm"
+    run:
+        shell("mkdir -p Snake/lib")
+        shell(r"""
+            SRC={input}
+            BASE=$(basename $SRC .C)
+            DIR=$(dirname $SRC)
+            # <-- double quotes so $SRC is expanded by bash
+            root -b -l -q -e ".L $SRC+" > {log} 2>&1
+            mv $DIR/${{BASE}}_C.so Snake/lib/{wildcards.script}_C.so
+            mv $DIR/${{BASE}}_C.d Snake/lib/{wildcards.script}_C.d
+            mv $DIR/${{BASE}}_C_ACLiC_dict_rdict.pcm Snake/lib/{wildcards.script}_C_ACLiC_dict_rdict.pcm &>>{log}
+        """)
+
+rule TMVAClassification:
+    log: "Log/B_BDT/TMVAClassification/Classification_{channel}_{track}.log"
+    input:
+        exe = "Snake/Scripts/B_BDT/TMVAClassification_{channel}_{track}.C",
+        infile = lambda wildcards: ["/home/alexanum/WORKSPACE/testing/Bproj_Preprocessed/Preselect/{}_{}_{}_{}_{}.root".format(tree, year, wildcards.channel, polarity, wildcards.track) for tree in trees for year in years for polarity in polarities] 
+    output: "Output/B_BDT/TMVAClassification/TMVA_{channel}_{track}.root",
+    run:
+        # infilevec = python_to_c_list(["Bproj_Preprocessed/Preselect/{}_{}_{}_{}_{}.root".format(tree, year, wildcards.channel, polarity, wildcards.track) for tree in trees for year in years for polarity in polarities]) 
+        infilevec = python_to_c_list(input.infile)
+        print(infilevec)
+        shell("root -b -l -q '{input.exe}({infilevec}, \"{output}\", \"dataset_{wildcards.channel}_{wildcards.track}\")' &> {log}")
+        shell("rm -rf Output/B_BDT/TMVAClassification/dataset_{wildcards.channel}_{wildcards.track}; mv dataset_{wildcards.channel}_{wildcards.track} Output/B_BDT/TMVAClassification/ &>> {log}")
+
+rule BDT_TMVAApplication_MC:   #done without tree
+    log: "Log/B_BDT/TMVAApplication/mc_{year}_{channel}_{polarity}_{track}.log"
+    input:
+        exe = "Snake/lib/B_BDT/TMVAApplication_{channel}_{track}_C.so",
+        # exe = "Snake/Scripts/B_BDT/TMVAApplication_{channel}_{track}.C",
+        TMVAclass = rules.TMVAClassification.output,
+        infile = "/home/alexanum/WORKSPACE/testing/Bproj_Preprocessed/Preselect/mc_{year}_{channel}_{polarity}_{track}.root"
+    output:  "Output/B_BDT/TMVAApplication/mc_{year}_{channel}_{polarity}_{track}.root"
+
+    run:
+        shell("""
+            root -b -l &> {log} <<'            EOF'
+            .L {input.exe}
+            TMVAApplication_{wildcards.channel}_{wildcards.track}(\"{input.infile}\", \"Output/B_BDT/TMVAClassification/dataset_{wildcards.channel}_{wildcards.track}\", \"{output}\")
+            EOF
+        """)
+
+rule BDT_TMVAApplication_Data:
+    log: "Log/B_BDT/TMVAApplication/data_{year}_{channel}_{polarity}_{track}.log"
+    input:
+        exe = "Snake/lib/B_BDT/TMVAApplication_{channel}_{track}_C.so",
+        # exe = "Snake/Scripts/B_BDT/TMVAApplication_{channel}_{track}.C",
+        TMVAclass = rules.TMVAClassification.output,
+        infile = "/home/alexanum/WORKSPACE/testing/Bproj_Preprocessed/Preselect/data_{year}_{channel}_{polarity}_{track}.root"
+    output: "Output/B_BDT/TMVAApplication/data_{year}_{channel}_{polarity}_{track}.root"
+    run:
+        shell("""
+            root -b -l &> {log} <<'            EOF'
+            .L {input.exe}
+            TMVAApplication_{wildcards.channel}_{wildcards.track}(\"{input.infile}\", \"Output/B_BDT/TMVAClassification/dataset_{wildcards.channel}_{wildcards.track}\", \"{output}\")
+            EOF
+        """)
+
+# rule DNN_TMVAClassification:
+#     log: "Log/B_DNN/TMVAClassification/Classification_{channel}_{track}.log"
+#     input:
+#         exe = "Snake/Scripts/B_DNN/TMVAClassification_{channel}_{track}.C",
+#         infile = lambda wildcards: ["/home/alexanum/WORKSPACE/testing/Bproj_Preprocessed/Preselect/{}_{}_{}_{}_{}.root".format(tree, year, wildcards.channel, polarity, wildcards.track) for tree in trees for year in years for polarity in polarities] 
+#     output: "Output/B_DNN/TMVAClassification/TMVA_{channel}_{track}.root",
+#     run:
+#         # infilevec = python_to_c_list(["Bproj_Preprocessed/Preselect/{}_{}_{}_{}_{}.root".format(tree, year, wildcards.channel, polarity, wildcards.track) for tree in trees for year in years for polarity in polarities]) 
+#         infilevec = python_to_c_list(input.infile)
+#         print(infilevec)
+#         shell("rm -rf dataset_{wildcards.channel}_{wildcards.track}")   # important!
+#         shell("root -b -l -q '{input.exe}({infilevec}, \"{output}\", \"dataset_{wildcards.channel}_{wildcards.track}\")' &> {log}")
+#         shell("rm -rf Output/B_DNN/TMVAClassification/dataset_{wildcards.channel}_{wildcards.track}")
+#         shell("mv dataset_{wildcards.channel}_{wildcards.track} Output/B_DNN/TMVAClassification/")
+
+# rule DNN_TMVAApplication_MC:   #done without tree
+#     log: "Log/B_DNN/TMVAApplication/mc_{year}_{channel}_{polarity}_{track}.log"
+#     input:
+#         exe = "Snake/lib/B_DNN/TMVAApplication_{channel}_{track}_C.so",
+#         # exe = "Snake/Scripts/B_BDT/TMVAApplication_{channel}_{track}.C",
+#         TMVAclass = rules.DNN_TMVAClassification.output,
+#         infile = "/home/alexanum/WORKSPACE/testing/Bproj_Preprocessed/Preselect/mc_{year}_{channel}_{polarity}_{track}.root"
+#     output:  "Output/B_DNN/TMVAApplication/mc_{year}_{channel}_{polarity}_{track}.root"
+
+#     run:
+#         shell("""
+#             root -b -l &> {log} <<'            EOF'
+#             .L {input.exe}
+#             TMVAApplication_{wildcards.channel}_{wildcards.track}(\"{input.infile}\", \"Output/B_DNN/TMVAClassification/dataset_{wildcards.channel}_{wildcards.track}\", \"{output}\")
+#             EOF
+#         """)
+
+# rule DNN_TMVAApplication_Data:
+#     log: "Log/B_DNN/TMVAApplication/data_{year}_{channel}_{polarity}_{track}.log"
+#     input:
+#         exe = "Snake/lib/B_DNN/TMVAApplication_{channel}_{track}_C.so",
+#         # exe = "Snake/Scripts/B_BDT/TMVAApplication_{channel}_{track}.C",
+#         TMVAclass = rules.DNN_TMVAClassification.output,
+#         infile = "/home/alexanum/WORKSPACE/testing/Bproj_Preprocessed/Preselect/data_{year}_{channel}_{polarity}_{track}.root"
+#     output: "Output/B_DNN/TMVAApplication/data_{year}_{channel}_{polarity}_{track}.root"
+#     run:
+#         shell("""
+#             root -b -l &> {log} <<'            EOF'
+#             .L {input.exe}
+#             TMVAApplication_{wildcards.channel}_{wildcards.track}(\"{input.infile}\", \"Output/B_DNN/TMVAClassification/dataset_{wildcards.channel}_{wildcards.track}\", \"{output}\")
+#             EOF
+#         """)
+
+# rule FoMScan:
+#     log: "Log/B_BDT/FoMScan/{channel}_{track}.log"
+#     input:
+#         exe = "Snake/lib/B_BDT/FoMScan_C.so",       
+#         # exe = "Snake/Scripts/B_BDT/FoMScan.C",                                          # tree year polarity channel (used to be)
+#         infile = lambda wildcards: ["Output/B_BDT/TMVAApplication/{}_{}_{}_{}_{}.root".format(tree, year, wildcards.channel, polarity, wildcards.track) for tree in trees for year in years for polarity in polarities],
+#     output: "Output/B_BDT/FoMScan/{channel}_{track}.txt",
+#     run:
+#         #datafilepaths = "Output/S1_BDT/TMVAApplication/data_*_{}.root".format(wildcards.channel)
+#         datafilepaths = "Output/B_BDT/TMVAApplication/data_*_{}_*_{}.root".format(wildcards.channel, wildcards.track), 
+#         MCfilepaths = "Output/B_BDT/TMVAApplication/mc_*_{}_*_{}.root".format(wildcards.channel, wildcards.track),
+#         fig_dir = f"Output/B_BDT/FoMScan/Figures/"
+#         shell("mkdir -p {fig_dir}")
+#         shell("""
+#             root -b -l &> {log} <<'            EOF'
+#             .L {input.exe}
+#             FoMScan(\"{datafilepaths}\", \"{MCfilepaths}\", \"{fig_dir}\",\"{output}\")
+#             EOF
+#         """)
+
+# rule ApplyBDTCut:
+#     log: "Log/B_BDT/ApplyBDTCut/{tree}_{channel}_{track}.log"
+#     input:
+#         exe = "Snake/lib/B_BDT/ApplyBDTCut_C.so",
+#         # exe = "Snake/Scripts/B_BDT/ApplyBDTCut.C",
+#         #infile = "Output/S1_BDT/TMVAApplication/{tree}_{year}_{channel}_{polarity}_{track}.root", I used this when i wanted to apply BDT to each combo year and polarity incl.
+#         infile = lambda wildcards: ["Output/B_BDT/TMVAApplication/{}_{}_{}_{}_{}.root".format(wildcards.tree, year, wildcards.channel, polarity, wildcards.track) for year in years for polarity in polarities],
+#         BDTfile = "Output/B_BDT/FoMScan/{channel}_{track}.txt",
+#     output: "Output/B_BDT/ApplyBDTCut/{tree}_{channel}_{track}.root",
+#     run:
+#         mergepaths = "Output/B_BDT/TMVAApplication/{}_*_{}_*_{}.root".format(wildcards.tree, wildcards.channel, wildcards.track), 
+#         with open(str(input.BDTfile), 'r') as f:
+#             BDTval = f.read().strip()
+#         print(wildcards.channel + " " + wildcards.track +" BDT cut value: " + BDTval)
+#         #infiles = "Output/S1_BDT/TMVAApplication/*_*_{}_*_{}.root".format(wildcards.channel, wildcards.track)    # merges data and mc!!!!!!!!!
+#         BDTcut = "Res_BDT > " + BDTval
+#         shell("""
+#             root -b -l &> {log} <<'            EOF'
+#             .L {input.exe}
+#             ApplyBDTCut(\"{mergepaths}\", \"{output}\", \"{BDTcut}\")
+#             EOF
+#         """)  
