@@ -10,7 +10,7 @@ The difference between D2H, D4H is the number of descriptor variables used for t
 The Classification Gude file shows the relevant midel configurations that were used for the report. 
 Only this parts need to be changed in order to re-run the analysis with different classification models
 
-The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the overtrin-KS and ROC plots
+The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the overtrain-KS and ROC plots
 Evaluation_DNN.C is used to apply a single score cut (This was primarily used for DNN but also aplicable to any classification output with score_variable
 FOM_scan.C is used to determine the optimal BDT cut for AdamptiveBoost
 
