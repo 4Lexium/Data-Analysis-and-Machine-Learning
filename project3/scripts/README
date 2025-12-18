@@ -9,4 +9,5 @@ The Classification Gude shows the relevant midel configurations that were used f
 Only this parts need to be changed 
 
 The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the KS and ROC plots
-The 
+Evaluation_DNN.C is used to apply a user defined cut (This was primarily used for DNN but also aplicable to any classification output with score_variable
+FOM_scan.C is used to determine the optimal BDT cut for AdamptiveBoost
