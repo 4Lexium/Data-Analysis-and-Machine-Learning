@@ -1,0 +1,44 @@
+	// factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT",
+	// 	"!H:!V:"
+	// 	"NTrees=600:"  
+	// 	"MaxDepth=3:"
+	// 	"MinNodeSize=4%:"         // against spiky behaviour
+	// 	"BoostType=Grad:"      
+	// 	"UseBaggedBoost=True:"
+	// 	"BaggedSampleFraction=0.7:"
+	// 	"SeparationType=CrossEntropy:"  // GiniIndex is more sensitive to unequal distribution and sharp boundries
+	// 	"Shrinkage=0.001:"
+	// 	"nCuts=20:"   //better target variance
+	// 	"PruneMethod=NoPruning"
+	// );
+
+	// factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT",
+	// 	"!H:!V:"
+	// 	"NTrees=600:"  
+	// 	"MaxDepth=3:"
+	// 	"MinNodeSize=2%:"         // against spiky behaviour
+	// 	"BoostType=AdaBoost:"
+	// 	"AdaBoostBeta=0.3:"        
+	// 	"UseBaggedBoost=True:"
+	// 	"BaggedSampleFraction=0.5:"
+	// 	"SeparationType=CrossEntropy:"  // GiniIndex is more sensitive to unequal distribution and sharp boundries
+	// 	"Shrinkage=0.1:"
+	// 	"nCuts=200:"   //better target variance
+	// 	"PruneMethod=NoPruning"
+	// );
+
+	factory->BookMethod(dataloader, TMVA::Types::kDNN, "BDT",
+		"!H:!V:"
+		"ErrorStrategy=CROSSENTROPY:"
+		"VarTransform=G:"
+		"Layout=RELU|128,RELU|64,RELU|32,Sigmoid:"   //RELU|16,Linear:"
+		"TrainingStrategy="
+		"LearningRate=1e-4,"
+		"BatchSize=64,"
+		"Momentum=0.9,"
+		"TestRepetitions=5,"
+		"MaxEpochs=200,"
+		"WeightDecay=1e-3,"
+		"DropoutFraction=0.3,"
+		"Optimizer=ADAM"
+	);
