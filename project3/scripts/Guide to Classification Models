@@ -1,4 +1,17 @@
-	// factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT",
+Specify the classifer by uncommenting one factory
+Note keep the "BDT" (for variable storage), does not influence code itself
+
+Fist define signal and background cuts:
+TCut sigcut = "1";
+TCut bkgcut = "B_M>5600 && B_M<7000";  // Train on purpuse with the Higth SB of of B 
+
+Then determine the train test split:
+dataloader->PrepareTrainingAndTestTree(sigcut, bkgcut,
+                                           "nTrain_Signal=:nTrain_Background=:SplitMode=Random:NormMode=NumEvents:!V"); //MC splin into train and test equally 
+
+
+Gradboost method:
+// factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT",
 	// 	"!H:!V:"
 	// 	"NTrees=600:"  
 	// 	"MaxDepth=3:"
@@ -12,6 +25,7 @@
 	// 	"PruneMethod=NoPruning"
 	// );
 
+Adaboost method:
 	// factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDT",
 	// 	"!H:!V:"
 	// 	"NTrees=600:"  
@@ -27,6 +41,7 @@
 	// 	"PruneMethod=NoPruning"
 	// );
 
+DNN method:
 	factory->BookMethod(dataloader, TMVA::Types::kDNN, "BDT",
 		"!H:!V:"
 		"ErrorStrategy=CROSSENTROPY:"
