@@ -1,13 +1,16 @@
 Script Naviagation:
 
-The Macro is implemented to work with the Snakefile. The snakefile determines which scripts to run with which root files
-The sytem is as follows tree (data/mc) -> channel (D2H/D4H) -> track (LL/DD) -> polarization (MD/MU)
-There are 4 classifcation scripts and 4 application scripts. The only difference is the name of the function and the the .C file itself (hence we present only the D4H and D2H file combination)
-The difference between D2,4H is the number of descriptor variables
+The Macro is created to work with the Snakefile. The snakefile determines the pipleine and administers which file-outputs are send forward as inputs (which scripts to run with which root files)
+The file sytem is categorized as follows: tree (data/mc) -> channel (D2H/D4H) -> track (LL/DD) -> polarization (MD/MU)
+There are 4 classifcation scripts and 4 application scripts for 4 classifiers. 
+The only difference (between chennels) in the scripts is: the name of the function and the the .C file itself 
+(hence we present only the D4H and D2H file combination)
+The difference between D2H, D4H is the number of descriptor variables used for the classifers, the cuts, splitting and method are the same, configuration are possible to make individually
 
-The Classification Gude shows the relevant midel configurations that were used for the report
-Only this parts need to be changed 
+The Classification Gude file shows the relevant midel configurations that were used for the report. 
+Only this parts need to be changed in order to re-run the analysis with different classification models
 
-The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the KS and ROC plots
-Evaluation_DNN.C is used to apply a user defined cut (This was primarily used for DNN but also aplicable to any classification output with score_variable
+The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the overtrin-KS and ROC plots
+Evaluation_DNN.C is used to apply a single score cut (This was primarily used for DNN but also aplicable to any classification output with score_variable
 FOM_scan.C is used to determine the optimal BDT cut for AdamptiveBoost
+
