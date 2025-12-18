@@ -7,3 +7,6 @@ The difference between D2,4H is the number of descriptor variables
 
 The Classification Gude shows the relevant midel configurations that were used for the report
 Only this parts need to be changed 
+
+The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the KS and ROC plots
+The 
