@@ -1,7 +1,7 @@
 Script Naviagation:
 
 The Macro is implemented to work with the Snakefile. The snakefile determines which scripts to run with which root files
-
+The sytem is as follows tree (data/mc) -> channel (D2H/D4H) -> track (LL/DD) -> polarization (MD/MU)
 There are 4 classifcation scripts and 4 application scripts. The only difference is the name of the function and the the .C file itself (hence we present only the D4H and D2H file combination)
 The difference between D2,4H is the number of descriptor variables
 
