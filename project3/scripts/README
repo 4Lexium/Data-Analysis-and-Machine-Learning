@@ -7,7 +7,7 @@ The only difference (between chennels) in the scripts is: the name of the functi
 (hence we present only the D4H and D2H file combination)
 The difference between D2H, D4H is the number of descriptor variables used for the classifers, the cuts, splitting and method are the same, configurations are possible to make individually
 
-The Classification Gude file shows the relevant midel configurations that were used for the report. 
+The Classification Gude file shows the relevant model configurations that were used for the report. 
 Only this parts need to be changed in order to re-run the analysis with different classification models
 
 The evaluation scripts evaluation.C is used after sucessfully running the classifcation.C This code generates the overtrain-KS and ROC plots
