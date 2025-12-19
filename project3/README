@@ -11,4 +11,6 @@ Figure folder contains the all the saved plots.
 Project3.pdf describes the theory and methods used in this report, it offsers a discussion on the plots and what they mean.
 
 
-
+ROOT Version: 6.26/04
+Snakemake Version: 7.32.4
+Python Version: 3.9.12
