@@ -1,13 +1,13 @@
 Project 3 of FYS-STK3155 25H course at University of Oslo (UiO) Autumn 2025 by Alexander Umansky.
 
 In the script sub-folder you'll find the .C macro that was used to perform the classifcation and generate the evaluation plots.
-Inside you finde a naviagator for what each scipt does. Code was developed together with external partners: Ding Y. and Song Y. (EPFL-LPHE)
+Inside you find a naviagator to what each individual scipt does. Code was developed together with external partners: Ding Y. and Song Y. (EPFL-LPHE)
 
 Preselected event data and truthmatched MC simulation are found inside rootfiles
-(unfortunately: the file size is too large to be stored in the repository.
+(unfortunately: the all event file sizes are too large to be stored in the repository.
 If needed send mail to alexander.umansky@fys.uio.no to ask for zip files
 
-figure folder contains the all the saved plots.
+Figure folder contains the all the saved plots.
 Project3.pdf describes the theory and methods used in this report, it offsers a discussion on the plots and what they mean.
 
 
