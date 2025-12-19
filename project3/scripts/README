@@ -1,6 +1,6 @@
 Script Naviagation:
 
-The Macro is created to work with the Snakefile. The snakefile determines the pipleine and administers which file-outputs are send forward as inputs (which scripts to run with which root files)
+The Macro is designed to work with Snakefile. The snakefile determines the pipleine and administers which file-outputs are send forward as inputs (which scripts to run with which root files)
 The file sytem is categorized as follows: tree (data/mc) -> channel (D2H/D4H) -> track (LL/DD) -> polarization (MD/MU)
 There are 4 classifcation scripts and 4 application scripts for 4 classifiers. 
 The only difference (between chennels) in the scripts is: the name of the function and the the .C file itself 
